@@ -1,5 +1,4 @@
-import event_sender
-import screen_fetcher
+import interfaces
 import os
 import subprocess
 import json
@@ -20,7 +19,7 @@ def check_build_product():
         execute_shell("cd MacOSScriptImpl && xcodebuild")
 
 
-class CommandLineTool(event_sender.EventSender, screen_fetcher.ScreenFetcher):
+class CommandLineTool(interfaces.EventSender, interfaces.ScreenFetcher):
 
     def __init__(self):
         self.__x = 0
@@ -32,7 +31,7 @@ class CommandLineTool(event_sender.EventSender, screen_fetcher.ScreenFetcher):
         check_build_product()
         execute_shell("{} click {} {}".format(target_product_path, x, y))
 
-    def fetch(self, path):
+    def capture(self, path):
         check_build_product()
         result = execute_shell("{} capture {} {}".format(target_product_path, path, "命运-冠位指定"))
         # print(result)

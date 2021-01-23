@@ -20,3 +20,8 @@ def match_template(template, source, resize=True, match_threshold=0.8, debug_sho
             cv.imshow("MatchResult", source_img)
             cv.waitKey(2000)
     return max_val, br_loc, tl_loc
+
+
+def show_img(path):
+    cv.imshow(path, cv.imread(path))
+    cv.waitKey()

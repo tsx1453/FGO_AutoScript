@@ -4,7 +4,7 @@
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/MacOSScriptImpl/MacOSScriptImpl.xcodeproj/project.xcworkspace/xcuserdata" />
       <excludeFolder url="file://$MODULE_DIR$/MacOSScriptImpl/Build" />
-      <excludeFolder url="file://$MODULE_DIR$/captures" />
+      <excludeFolder url="file://$MODULE_DIR$/temp_folder" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.9 (base)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />

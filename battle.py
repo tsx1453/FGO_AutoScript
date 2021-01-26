@@ -14,6 +14,7 @@ def _wait_for(template, step=3, threshold=0.9, max_count=5):
         time.sleep(step)
         count = count + 1
         if count > max_count:
+            common_util.write_log("wait for {} has run for {} times, break out".format(template, count))
             break
 
 
@@ -23,27 +24,32 @@ def battle(battle_state_list, battle_count=None, apple_count=None):
         return
     battle_count_local = 0
     apple_count_local = 0
-    running = True
-    while running:
-        for state in battle_state_list:
-            capture = ui_util.get_new_capture()
-            if state.match(capture):
-                if isinstance(state, SelectFriendState):
-                    battle_count_local = battle_count_local + 1
-                    common_util.write_log("start battle {}/{}".format(battle_count_local, battle_count))
-                if isinstance(state, AppleEatState):
-                    apple_count_local = apple_count_local + 1
-                    common_util.write_log("eat apple {}/{}".format(apple_count_local, apple_count))
-                if isinstance(state, BattleSettleConfirmState):
-                    common_util.write_log("finish battle {}/{}".format(battle_count_local, battle_count))
-                    if battle_count is not None and battle_count_local >= battle_count:
-                        running = False
-                        break
-                    if apple_count is not None and apple_count_local >= apple_count:
-                        running = False
-                        break
-                state.execute()
-                time.sleep(1)
+    try:
+        running = True
+        while running:
+            for state in battle_state_list:
+                capture = ui_util.get_new_capture()
+                if state.match(capture):
+                    if isinstance(state, SelectFriendState):
+                        battle_count_local = battle_count_local + 1
+                        common_util.write_log("start battle {}/{}".format(battle_count_local, battle_count))
+                    if isinstance(state, AppleEatState):
+                        apple_count_local = apple_count_local + 1
+                        common_util.write_log("eat apple {}/{}".format(apple_count_local, apple_count))
+                    if isinstance(state, BattleSettleConfirmState):
+                        common_util.write_log("finish battle {}/{}".format(battle_count_local, battle_count))
+                        if battle_count is not None and battle_count_local >= battle_count:
+                            running = False
+                            break
+                        if apple_count is not None and apple_count_local >= apple_count:
+                            running = False
+                            break
+                    state.execute()
+                    time.sleep(1)
+    except StopBattleException:
+        common_util.write_log(
+            "stop battle {}/{}(apple {}/{}) by StopBattleException".format(battle_count_local, battle_count,
+                                                                           apple_count_local, apple_count))
 
 
 class SimpleMatchAndClickState(interfaces.State):
@@ -129,9 +135,10 @@ class SkillRunner(interfaces.Runner):
             x = left + item_width * (index - 1) + item_width / 2
             random_x = random.Random().randrange(start=-10, stop=10)
             random_y = random.Random().randrange(start=-10, stop=10)
-            common_util.write_log("click skill {}, origin_position = ({}, {}), random_delta = ({}, {})".format(index, x, center_y,
-                                                                                               random_x,
-                                                                                               random_y))
+            common_util.write_log(
+                "click skill {}, origin_position = ({}, {}), random_delta = ({}, {})".format(index, x, center_y,
+                                                                                             random_x,
+                                                                                             random_y))
             ui_util.click(x + random_x, center_y + random_y)
             time.sleep(2)
             _wait_for(resources.battle_attack_button)
@@ -146,14 +153,14 @@ class SelectCardRunner(interfaces.Runner):
         common_util.write_log("select card")
         _wait_for(resources.battle_attack_button)
         ui_util.match_and_click(resources.battle_attack_button, delete_after_match=True)
-        time.sleep(2)
+        time.sleep(random.randrange(2, stop=4))
         selected_card_count = 0
         while selected_card_count < 3:
             for card in self.card_list:
                 if ui_util.match_and_click(card, delete_after_match=True):
                     selected_card_count = selected_card_count + 1
                     common_util.write_log("select card {}".format(selected_card_count))
-                    time.sleep(1)
+                    time.sleep(random.randrange(2, stop=3))
                     break
 
 
@@ -194,3 +201,46 @@ class AppleEatState(interfaces.State):
         _wait_for(resources.apple_eat_dialog_confirm_button, step=1)
         ui_util.match_and_click(resources.apple_eat_dialog_confirm_button)
         time.sleep(2)
+
+
+class CardSelectExceptionState(interfaces.State):
+
+    def match(self, capture_path):
+        return cv_util.has_match(resources.battle_speed_set_button, capture_path)
+
+    def execute(self):
+        for card in [resources.action_buster, resources.action_arts, resources.action_quick]:
+            if ui_util.match_and_click(card):
+                break
+
+
+class UsedSkillClickDialogState(interfaces.State):
+    def match(self, capture_path):
+        return cv_util.has_match(resources.skill_used_click_dialog_title, capture_path)
+
+    def execute(self):
+        ui_util.match_and_click(resources.cancel_button)
+        _wait_for(resources.battle_attack_button, step=1)
+
+
+class ServantClickedStatusDialogState(interfaces.State):
+    def match(self, capture_path):
+        return cv_util.has_match(resources.servant_selected_ststus_title, capture_path)
+
+    def execute(self):
+        ui_util.match_and_click(resources.close_button)
+        _wait_for(resources.battle_attack_button, step=1)
+
+
+class ServantCountOverflowDialogState(interfaces.State):
+
+    def match(self, capture_path):
+        return cv_util.has_match(resources.need_release_space_buttons, capture_path)
+
+    def execute(self):
+        common_util.notify_release_space()
+        raise StopBattleException()
+
+
+class StopBattleException(Exception):
+    pass

@@ -33,5 +33,9 @@ battle_list = [
     battle.BattleSettleConfirmState(),
     battle.BattleQuickStartState(),
     battle.AppleEatState(),
+    battle.CardSelectExceptionState(),
+    battle.UsedSkillClickDialogState(),
+    battle.ServantClickedStatusDialogState(),
+    battle.ServantCountOverflowDialogState()
 ]
-battle.battle(battle_list, battle_count=1)
+battle.battle(battle_list, battle_count=300)

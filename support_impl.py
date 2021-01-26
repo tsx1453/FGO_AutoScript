@@ -1,14 +1,13 @@
 import interfaces
 import os
-import subprocess
 import json
+import subprocess
 
 target_product_path = os.path.join(os.path.split(os.path.realpath(__file__))[0],
                                    "MacOSScriptImpl/Build/Release/MacOSScriptImpl")
 
 
 def execute_shell(cmd):
-    # return os.system(cmd)
     sub = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
     sub.wait()
     return str(sub.stdout.read(), encoding="utf-8")

@@ -6,16 +6,7 @@ import resources
 import ui_util
 import random
 import common_util
-
-
-def _wait_for(template, step=3, threshold=0.9, max_count=5):
-    count = 0
-    while not ui_util.get_new_capture_and_match(template, threshold=threshold, remove_after_match=True):
-        time.sleep(step)
-        count = count + 1
-        if count > max_count:
-            common_util.write_log("wait for {} has run for {} times, break out".format(template, count))
-            break
+from common_util import wait_for as _wait_for
 
 
 def battle(battle_state_list, battle_count=None, apple_count=None):

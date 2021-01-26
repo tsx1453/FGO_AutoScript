@@ -21,14 +21,15 @@ special_random_position_delta = [
 def get_new_capture():
     global impl, capture_queue
     path = os.path.join(config.temp_folder_path,
-                        "window_capture_{}.png".format(time.strftime("%M-%D-%H-%M-%S", time.localtime())))
+                        "window_capture_{}.png".format(time.strftime("%m-%d-%H-%M-%S", time.localtime())))
     # common_util.write_log(path)
     capture_queue.append(path)
     if len(capture_queue) > config.capture_cache_size:
         common_util.delete_file(capture_queue[0])
         capture_queue = capture_queue[1:]
-    impl.capture(path)
-    return path
+    if impl.capture(path):
+        return path
+    return None
 
 
 def get_new_capture_and_match(template, threshold=0.9, remove_after_match=False):

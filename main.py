@@ -1,5 +1,9 @@
 import battle
+import launch
 import resources
+
+launch.launch()
+launch.go_to_exp()
 
 # 刷狗粮
 battle_list = [
@@ -38,4 +42,4 @@ battle_list = [
     battle.ServantClickedStatusDialogState(),
     battle.ServantCountOverflowDialogState()
 ]
-battle.battle(battle_list, battle_count=300)
+battle.battle(battle_list, battle_count=100)

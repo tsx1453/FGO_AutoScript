@@ -6,6 +6,7 @@ import resources
 import ui_util
 import random
 import common_util
+import config
 from common_util import wait_for as _wait_for
 
 
@@ -77,7 +78,7 @@ class StartBattleState(SimpleMatchAndClickState):
         super().__init__(resources.battle_start_button)
 
 
-class BattleState(interfaces.State):
+class NormalTemplateBattleState(interfaces.State):
     def __init__(self, name, match_templates, runner_list, last_turn=False):
         super().__init__()
         self.name = name
@@ -235,3 +236,66 @@ class ServantCountOverflowDialogState(interfaces.State):
 
 class StopBattleException(Exception):
     pass
+
+
+class CheckNpBattleState(interfaces.State):
+
+    def __init__(self, name, match_templates, use_skill=False):
+        super().__init__()
+        self.name = name
+        self.match_templates = match_templates
+        self.use_skill = use_skill
+
+    def match(self, capture_path):
+        if not cv_util.has_match(resources.battle_attack_button, capture_path):
+            return False
+        for t in self.match_templates:
+            if cv_util.has_match(t, capture_path, match_threshold=0.94):
+                common_util.write_log("battle {} match {}".format(self.name, capture_path))
+                return True
+        return False
+
+    def execute(self):
+        _wait_for(resources.battle_attack_button)
+        # if self.use_skill:
+        #     skill_list = [resources.skill_single_np_up, resources.skill_single_defense_up,
+        #                   resources.skill_single_attack_up]
+        #     skill_used_state = ServantClickedStatusDialogState()
+        #     for skill in skill_list:
+        #         if skill_used_state.match(ui_util.get_new_capture()):
+        #             skill_used_state.execute()
+        #         _wait_for(resources.battle_attack_button)
+        #         ui_util.match_and_click(skill, match_threshold=0.9)
+        #     if skill_used_state.match(ui_util.get_new_capture()):
+        #         skill_used_state.execute()
+        # _wait_for(resources.battle_attack_button)
+        max_val, tl_loc, br_loc = cv_util.match_template(resources.np_progress_full, ui_util.get_new_capture())
+        print("match baoju", max_val, tl_loc, br_loc, config.window_size)
+        baoju_position = -1
+        if max_val > 0.9:
+            center_x = (br_loc[0] + tl_loc[0]) / 2
+            window_w = config.window_size[0]
+            if window_w is not None and window_w > 0:
+                p = center_x / window_w
+                print(property)
+                if p < 1 / 4:
+                    baoju_position = 0
+                elif p < 2 / 4:
+                    baoju_position = 1
+                elif p < 3 / 4:
+                    baoju_position = 2
+        print("baoju rsult ", baoju_position)
+        ui_util.match_and_click(resources.battle_attack_button)
+        time.sleep(3)
+        _wait_for(resources.battle_speed_set_button)
+        while cv_util.has_match(resources.battle_speed_set_button, ui_util.get_new_capture()):
+            if baoju_position != -1:
+                position_set = [(250, 250), (400, 250), (550, 250)]
+                ui_util.click(position_set[baoju_position][0] + random.randrange(-10, 10),
+                              position_set[baoju_position][1] + random.randrange(-10, 10))
+                baoju_position = -1
+                time.sleep(3)
+            for card in [resources.action_buster, resources.action_arts, resources.action_quick]:
+                if ui_util.match_and_click(card):
+                    time.sleep(3)
+                    break

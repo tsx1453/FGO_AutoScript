@@ -2,6 +2,7 @@ import interfaces
 import os
 import json
 import subprocess
+import config
 
 target_product_path = os.path.join(os.path.split(os.path.realpath(__file__))[0],
                                    "MacOSScriptImpl/Build/Release/MacOSScriptImpl")
@@ -41,4 +42,5 @@ class CommandLineTool(interfaces.EventSender, interfaces.ScreenFetcher):
             return False
         # common_util.write_log(json_data, type(json_data))
         self.__x, self.__y, self.__w, self.__h = json_data['x'], json_data['y'], json_data['w'], json_data['h']
+        config.window_size = (self.__w, self.__h)
         return True

@@ -6,6 +6,7 @@ template_img_path = os.path.join(project_path, "template")
 match_result_save_path = os.path.join(project_path, "match_results")
 log_file_path = os.path.join(temp_folder_path, "log.txt")
 capture_cache_size = 200
+window_size = (0, 0)
 
 if not os.path.exists(temp_folder_path):
     os.mkdir(path=temp_folder_path)

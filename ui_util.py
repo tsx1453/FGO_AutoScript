@@ -46,14 +46,14 @@ def click(x, y):
     impl.click(x, y)
 
 
-def match_and_click(template, source=None, delete_after_match=False):
+def match_and_click(template, source=None, delete_after_match=False, match_threshold=0.6):
     global impl, special_random_position_delta
     if source is None:
         source = get_new_capture()
     max_val, tl_loc, br_loc = cv_util.match_template(template, source)
     if delete_after_match:
         common_util.delete_file(source)
-    if max_val > 0.6:
+    if max_val > match_threshold:
         x = (br_loc[0] + tl_loc[0]) / 2
         y = (br_loc[1] + tl_loc[1]) / 2
         random_delta_x, random_delta_y = 0, 0

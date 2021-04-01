@@ -5,7 +5,7 @@ import subprocess
 import config
 
 target_product_path = os.path.join(os.path.split(os.path.realpath(__file__))[0],
-                                   "MacOSScriptImpl/Build/Release/MacOSScriptImpl")
+                                   "../MacOSScriptImpl/Build/Release/MacOSScriptImpl")
 
 
 def execute_shell(cmd):

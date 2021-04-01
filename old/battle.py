@@ -21,7 +21,7 @@ def battle(battle_state_list, battle_count=None, apple_count=None):
         while running:
             for state in battle_state_list:
                 capture = ui_util.get_new_capture()
-                if state.match(capture):
+                if state.accept(capture):
                     if isinstance(state, SelectFriendState):
                         battle_count_local = battle_count_local + 1
                         common_util.write_log("start battle {}/{}".format(battle_count_local, battle_count))

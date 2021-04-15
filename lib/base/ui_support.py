@@ -34,7 +34,7 @@ class CommandLineTool:
 
     def capture(self, path):
         check_build_product()
-        result = execute_shell("{} capture {} {}".fomat(target_product_path, path, "命运-冠位指定"))
+        result = execute_shell("{} capture {} {}".format(target_product_path, path, "命运-冠位指定"))
         json_data = json.loads(result)
         if len(json_data) != 4:
             return False

@@ -11,6 +11,8 @@ def build_normal_daily_exp_task_set():
         atomic_tasks.RandomSelectFriendTask(),
         atomic_tasks.ClickStartBattleTask(),
 
+        atomic_tasks.BattleUpdateGlobalStatusTask(),
+
         atomic_tasks.BattleClickSkillTask(resources.skill_avenger_yste, [1, 3], turn_num=1),
         atomic_tasks.BattleClickSkillTask(resources.skill_berserker_sbd, [2, 3], turn_num=2),
         atomic_tasks.BattleClickSkillTask(resources.skill_berserker_azn, [1, 2], turn_num=3),
@@ -18,9 +20,12 @@ def build_normal_daily_exp_task_set():
         atomic_tasks.BattleClickAttackTask(),
 
         atomic_tasks.BattleSelectActionCardTask(special_templates={
-            1: [resources.action_final_avenger_yste],
-            2: [resources.action_final_berserker_sbd],
-            3: [resources.action_final_berserker_azn]
+            1: [resources.action_final_avenger_yste, resources.action_final_berserker_sbd,
+                resources.action_final_berserker_azn],
+            2: [resources.action_final_berserker_sbd, resources.action_final_avenger_yste,
+                resources.action_final_berserker_azn],
+            3: [resources.action_final_berserker_azn, resources.action_final_avenger_yste,
+                resources.action_final_berserker_sbd]
         }),
 
         atomic_tasks.BattleSettleJiBanTask(),
@@ -32,3 +37,4 @@ def build_normal_daily_exp_task_set():
         atomic_tasks.ServantClickedStatusDialogTask(),
         atomic_tasks.ServantCountOverflowDialogTask(),
     ]
+

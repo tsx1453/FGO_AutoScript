@@ -6,6 +6,7 @@ temp_folder_path = os.path.join(project_path, "temp_folder")
 template_img_path = os.path.join(project_path, "template")
 match_result_save_path = os.path.join(project_path, "match_results")
 log_file_path = os.path.join(temp_folder_path, "log.txt")
+battle_info_path = os.path.join(temp_folder_path, "battle_info.txt")
 capture_cache_size = 200
 # window_size = (0, 0)
 

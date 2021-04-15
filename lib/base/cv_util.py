@@ -25,7 +25,9 @@ def match_template(template, source, resize=True, match_threshold=0.9):
     min_val, max_val, min_loc, max_loc = cv.minMaxLoc(match_result)
     template_name = template.replace(config.template_img_path, "")
     logger.log(
-        "match {} in {} result is {}, {}".format(template_name, source, (min_val, max_val, min_loc, max_loc),
+        "match {} in {} result is {}, {}".format(logger.resource_path_to_name(template_name),
+                                                 logger.temp_path_to_name(source),
+                                                 (min_val, max_val, min_loc, max_loc),
                                                  match_threshold))
     if max_val > match_threshold and config.currentDebugLevel.value > config.DebugLevel.JUST_LOG.value:
         corner_loc = (max_loc[0] + template_img.shape[1], max_loc[1] + template_img.shape[0])
@@ -50,3 +52,7 @@ def has_match(template, source, resize=True, match_threshold=0.9):
 def show_img(path):
     cv.imshow(path, cv.imread(path))
     cv.waitKey()
+
+
+def read_img(path):
+    return cv.imread(path)
